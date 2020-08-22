@@ -1,0 +1,11 @@
+{
+    "files.associations": {
+        "*.js": "javascriptreact"
+    },
+    "easysass.compileAfterSave": true,
+    "easysass.targetDir": "./src/assets/css/",
+    "easysass.formats": [{
+        "format": "compressed",
+        "extension": ".min.css"
+    }]
+}

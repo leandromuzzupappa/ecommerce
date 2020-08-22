@@ -1,0 +1,21 @@
+@import '../../default.scss';
+
+.header {
+    border-bottom: 1px solid $gray1;
+
+    .wrapper {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+        align-items: center;
+        padding: 1rem 0rem;
+    }
+
+    .logo {
+        margin-right: 2rem;
+
+        img {
+            width: 150px;
+        }
+    }
+}

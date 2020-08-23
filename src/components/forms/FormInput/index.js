@@ -2,7 +2,7 @@ import React from 'react';
 
 import './styles.scss';
 
-const FormInput = ({handlechange, label, ...otherProps}) => {
+const FormInput = ({handleChange, label, ...otherProps}) => {
     return (
         <div className="formRow">
             {label && (
@@ -10,7 +10,7 @@ const FormInput = ({handlechange, label, ...otherProps}) => {
                     {label}
                 </label>
             )}
-            <input className="formInput" onChange={handlechange} {...otherProps}/>
+            <input className="formInput" onChange={handleChange} {...otherProps}/>
         </div>
     )
 }

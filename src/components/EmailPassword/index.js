@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import { withRouter } from 'react-router-dom'
 
 import './styles.scss';
@@ -9,96 +9,74 @@ import Button from  './../forms/Button'
 import { auth } from '../../firebase/utils';
 
 
-const initialState = {
-    email: '',
-    errors: []
-}
+const EmailPassword = props => {
 
-class EmailPassword extends Component {
-    constructor(props) {
-        super(props);
+    const [email, setEmail] = useState('');
+    const [errors, setErrors] = useState([]);
 
-        this.state = {
-            ...initialState
-        }
-
-        this.handleChange = this.handleChange.bind(this);
-    }
-
-    handleChange(e) {
-        const { name, value } = e.target;
-
-        this.setState({
-            [name]: value
-        })
-    }
-
-    handleSubmit = async e => {
+    const handleSubmit = async e => {
         e.preventDefault();
 
-        try {
-            const { email } = this.state;
-
-            const config = {
-                url: 'http://localhost:3000/login'
-            }
-            await auth.sendPasswordResetEmail(email, config)
-                .then(() => {
-                    this.props.history.push('/login');
-                })
-                .catch(()=>{
-                    const err = ['Email not found!']
-                    this.setState({
-                        errors: err
+        if (email.length !== 0) {
+            try {
+                const config = {
+                    url: 'http://localhost:3000/login'
+                }
+                await auth.sendPasswordResetEmail(email, config)
+                    .then(() => {
+                        props.history.push('/login');
                     })
-                })
-
-        } catch (err) {
-            console.log(err);
+                    .catch(()=>{
+                        const err = ['Email not found!']
+                        setErrors(err);
+                    })
+    
+            } catch (err) {
+                console.log(err);
+            }
+        } else {
+            const err = ['Email is must!']
+            setErrors(err);
         }
 
     }
 
 
-    render() {
-        const { email, errors } = this.state;
-
-        const AuthWrapperConfig = {
-            headline: 'Email Password',
-            classes: 'recoverPassword'
-        }
-
-        return (
-            <AuthWrapper {...AuthWrapperConfig}>
-
-                {errors.length > 0 && (
-                    <div className="formValidation">
-                        <ul>
-                            {errors.map( (err, index) => {
-                                return <li key={index}>{err}</li>
-                            } )}
-                        </ul>
-                    </div>
-                )}
-
-                <form onSubmit={this.handleSubmit}>
-                    <FormInput
-                        label="Email"
-                        type="email"
-                        name="email"
-                        value={email}
-                        placeholder="Email"
-                        onChange={this.handleChange}
-                    />
-
-                    <Button type="submit">
-                        Email Password
-                    </Button>
-                </form>
-
-            </AuthWrapper>
-        )
+    const AuthWrapperConfig = {
+        headline: 'Email Password',
+        classes: 'recoverPassword'
     }
+
+    return (
+        <AuthWrapper {...AuthWrapperConfig}>
+
+            {errors.length > 0 && (
+                <div className="formValidation">
+                    <ul>
+                        {errors.map( (err, index) => {
+                            return <li key={index}>{err}</li>
+                        } )}
+                    </ul>
+                </div>
+            )}
+
+            <form onSubmit={handleSubmit}>
+                <FormInput
+                    label="Email"
+                    type="email"
+                    name="email"
+                    value={email}
+                    placeholder="Email"
+                    handleChange={e => setEmail(e.target.value)}
+                />
+
+                <Button type="submit">
+                    Email Password
+                </Button>
+            </form>
+
+        </AuthWrapper>
+    )
 }
 
 export default withRouter(EmailPassword);

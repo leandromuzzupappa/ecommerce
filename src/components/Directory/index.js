@@ -7,17 +7,15 @@ import './styles.scss';
 const Directory = props => {
     return (
         <div className="directory">
-            <div className="wrapper">
-                <div className="item item--hcg">
-                    <a href="#dsa">
-                        Shop Herencia
-                    </a>
-                </div>
-                <div className="item item--ksk">
-                    <a href="#dsa">
-                        Shop Kosiuko
-                    </a>
-                </div>
+            <div className="item item--hcg">
+                <a href="#dsa">
+                    Shop Herencia
+                </a>
+            </div>
+            <div className="item item--ksk">
+                <a href="#dsa">
+                    Shop Kosiuko
+                </a>
             </div>
         </div>
     )

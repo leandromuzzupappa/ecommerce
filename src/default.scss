@@ -45,9 +45,17 @@ ul {
     padding: 0px;
 }
 
-.wrapper {
+.wrapper,
+.main {
     width: 90%;
     max-width: 1000px;
+    position: relative;
+    margin: 0 auto;
+}
+
+.mainFullWidth {
+    width: 100%;
+    max-width: 100%;
     position: relative;
     margin: 0 auto;
 }

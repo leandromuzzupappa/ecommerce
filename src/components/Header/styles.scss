@@ -18,4 +18,23 @@
             width: 150px;
         }
     }
+
+    ul {
+        li {
+            a {
+                display: block;
+                margin-bottom: .2rem;
+                color: $gray3;
+                @include transition(.2s);
+
+                &:hover {
+                    color: palevioletred;
+                }
+            }
+        }
+    }
+
+    .helperNav {
+        margin-left: auto;
+    }
 }

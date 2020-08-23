@@ -1,10 +1,13 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 
 import './styles.scss';
-import Buttons from '../forms/Button';
-import {auth ,signInWithGoogle} from '../../firebase/utils'
-import FormInput from '../forms/FormInput';
-import Button from '../forms/Button';
+import { auth ,signInWithGoogle } from './../../firebase/utils';
+
+import AuthWrapper from './../AuthWrapper';
+import FormInput from './../forms/FormInput';
+import Button from './../forms/Button';
+
 
 const initialState = {
     email: '',
@@ -23,42 +26,44 @@ class SignIn extends Component {
     }
 
     handleChange(e) {
-        const {name, value} = e.target;
+        const { name, value } = e.target;
 
         this.setState({
             [name]: value
-        })
+        });
     }
 
     handleSubmit = async e => {
         e.preventDefault();
 
-        const {email, password} = this.state;
+        const { email, password } = this.state;
 
-        try {
-            await auth.signInWithEmailAndPassword(email, password);
-            this.setState({
-                ...initialState
-            })
+        if (email.length !== 0 && password.length !== 0) {
+            try {
+                await auth.signInWithEmailAndPassword(email, password);
+                this.setState({
+                    ...initialState
+                })
 
 
-        } catch (err) {
-            console.log(err);
-            this.setState({
-                errors: ['Email or password invalid'],
-            })
-            return;
+            } catch (err) {
+                console.log(err);
+                this.setState({
+                    errors: ['Email or password invalid'],
+                })
+            }
         }
     }
 
     render() {
-        const {email, password, errors} = this.state;
+        const { email, password, errors } = this.state;
+        const authWrapperConfig = {
+            headline: 'Login',
+            classes: 'signin'
+        }
 
         return (
-            <div className="signin">
-                <h2>
-                    LogIn
-                </h2>
+            <AuthWrapper {...authWrapperConfig}>
 
                 {errors.length > 0 && (
                     <div className="formValidation">
@@ -91,13 +96,17 @@ class SignIn extends Component {
                         Login
                     </Button>
 
+                    <div className="links">
+                        <Link to="/recovery">Forgot password</Link>
+                    </div>
+
                     <div className="socialSignin">
-                        <Buttons onClick={signInWithGoogle}>
+                        <Button onClick={signInWithGoogle}>
                             Sign in with Google
-                        </Buttons>
+                        </Button>
                     </div>
                 </form>
-            </div>
+            </AuthWrapper>
         )
     }
 }

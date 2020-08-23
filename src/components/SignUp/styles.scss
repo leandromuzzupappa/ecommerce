@@ -3,30 +3,7 @@
 
 .signup {
     width: 80%;
-    height: 100%;
-    @include transition(.2s);
-    border: 1px solid $gray1;
-    padding: 1rem;
     margin: 10vh auto;
-
-    h2 {
-        margin-bottom: 1rem;
-        padding-bottom: .5rem;
-        border-bottom: 1px solid $gray1;
-        text-transform: uppercase;
-        font-weight: 700;
-    }
-
-    .formValidation {
-        ul {
-            li {
-                margin-bottom: 1rem;
-                color: red;
-                @include font-size(12);
-                font-style: italic;
-            }
-        }
-    }
 
     form {
         display: grid;

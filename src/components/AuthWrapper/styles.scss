@@ -1,0 +1,43 @@
+@import '../../assets/scss/_mixins';
+@import '../../assets/scss/_variables';
+
+.authWrapper {
+    @include transition(.2s);
+    border: 1px solid $gray1;
+    padding: 1rem;
+
+    h2 {
+        margin-bottom: 1rem;
+        padding-bottom: .5rem;
+        border-bottom: 1px solid $gray1;
+        text-transform: uppercase;
+        font-weight: 700;
+    }
+
+    .formValidation {
+        ul {
+            li {
+                margin-bottom: 1rem;
+                color: red;
+                @include font-size(12);
+                font-style: italic;
+            }
+        }
+    }
+
+    .links {
+        text-align: center;
+
+        a {
+            display: block;
+            margin: .5rem 0rem;
+            @include font-size(12);
+            color: $gray1;
+
+            &:hover {
+                color: $gray4;
+            }
+        }
+    }
+
+}

@@ -1,31 +1,31 @@
 import React, { Component } from 'react';
-import {Route, Switch, Redirect} from 'react-router-dom';
+import { connect } from 'react-redux';
+import { Route, Switch, Redirect } from 'react-router-dom';
+import { auth, handleUserProfile } from './firebase/utils';
+import { setCurrentUser } from './redux/User/user.actions';
 
 import './default.scss';
 
-import Homepage from './pages/Homepage';
-import Registration from './pages/Registration';
+// Layouts
 import MainLayout from './layout/MainLayout';
 import HomeLayout from './layout/HomeLayout';
-import Login from './pages/Login';
-import {auth, handleUserProfile} from './firebase/utils'
 
-const initialState = {
-  currentUser: null
-}
+// Pages
+import Homepage from './pages/Homepage';
+import Registration from './pages/Registration';
+import Login from './pages/Login';
+import Recovery from './pages/Recovery';
+
+
 class App extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      ...initialState
-    }
-  }
 
   // creo un evento
   authListener = null;
 
   // me suscribo
   componentDidMount() {
+    const { setCurrentUser } = this.props;
+
     this.authListener = auth.onAuthStateChanged(async userAuth => {
 
       // si existe el usuario
@@ -33,21 +33,15 @@ class App extends Component {
         const userRef = await handleUserProfile(userAuth);
         userRef.onSnapshot(snapshot => {
           // updateo el local state
-          this.setState({
-            currentUser: {
-              id: snapshot.id,
-              ...snapshot.data()
-            }
-          })
+          setCurrentUser({
+            id: snapshot.id,
+            ...snapshot.data()
+          });
         })
       }
 
       // si no existe
-      this.setState({
-        ...initialState
-      })
-
-
+      setCurrentUser(userAuth);
     });
   }
 
@@ -59,23 +53,23 @@ class App extends Component {
 
   render() {
 
-    const {currentUser} = this.state;
+    const { currentUser } = this.props;
 
     return (
       <div className='App'>
         <Switch>
-          <Route exact path="/" render={()=>(
+          <Route exact path="/" render={() => (
             // En el render puedo returnear directo o si seteo el arrow function
             // de la siguiente manera tengo que hacer un return () => {return (<MainLayout> ... </MainLayout>)}
-            <HomeLayout currentUser={currentUser}>
+            <HomeLayout>
               <Homepage />
             </HomeLayout>
           )} />
   
           <Route 
             path="/registration" 
-            render={()=> currentUser ? <Redirect to="/" /> : (
-              <MainLayout currentUser={currentUser}>
+            render={() => currentUser ? <Redirect to="/" /> : (
+              <MainLayout>
                 <Registration />
               </MainLayout>
             )} 
@@ -83,16 +77,32 @@ class App extends Component {
   
           <Route 
             path="/login" 
-            render={()=> currentUser ? <Redirect to="/" /> : (
-              <MainLayout currentUser={currentUser}>
+            render={() => currentUser ? <Redirect to="/" /> : (
+              <MainLayout>
                 <Login />
+              </MainLayout>
+            )} 
+          />
+
+          <Route 
+            path="/recovery" render={() => (
+              <MainLayout>
+                <Recovery />
               </MainLayout>
             )} 
           />
         </Switch>
       </div>
-    )
+    );
   }
 }
 
-export default App
+const mapStateToProps = ({ user }) => ({
+  currentUser: user.currentUser
+})
+
+const mapDispatchToProps = dispatch => ({
+  setCurrentUser: user => dispatch(setCurrentUser(user))
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);

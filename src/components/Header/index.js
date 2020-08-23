@@ -1,12 +1,13 @@
 import React from 'react';
-import {Link} from 'react-router-dom';
-import {auth} from '../../firebase/utils';
+import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
+import { auth } from './../../firebase/utils';
 
 import './styles.scss';
 import Logo from '../../assets/images/logo_outlet.svg';
 
 const Header = props => {
-    const {currentUser} = props; 
+    const { currentUser } = props; 
     return (
         <header className="header">
             <div className="wrapper">
@@ -60,4 +61,8 @@ Header.defaultProps = {
     currentUser: null
 }
 
-export default Header;
+const mapStateToProps = ({ user }) => ({
+    currentUser: user.currentUser
+})
+
+export default connect(mapStateToProps, null)(Header);

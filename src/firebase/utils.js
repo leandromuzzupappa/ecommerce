@@ -26,13 +26,13 @@ export const handleUserProfile = async (userAuth, additionalData) => {
     if (!userAuth) return;
 
     // Checkeo si el usuario esta en la coleccion
-    const {uid} = userAuth;
+    const { uid } = userAuth;
 
     const userRef = firestore.doc(`users/${uid}`); // Returnea una referencia
     const snapShot = await userRef.get();
 
     if(!snapShot.exists) {
-        const {displayName, email} = userAuth;
+        const { displayName, email } = userAuth;
         const timestamp = new Date();
         try {
             await userRef.set({

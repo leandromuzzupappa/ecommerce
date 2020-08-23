@@ -1,9 +1,10 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import './styles.scss';
 
-import {auth, handleUserProfile} from '../../firebase/utils';
+import { auth, handleUserProfile } from '../../firebase/utils';
 import FormInput from '../forms/FormInput';
 import Button from '../forms/Button';
+import AuthWrapper from '../AuthWrapper';
 
 
 const initialState = {
@@ -26,7 +27,7 @@ class SignUp extends Component {
     }
 
     handleChange(e) {
-        const {name, value} = e.target;
+        const { name, value } = e.target;
 
         this.setState({
             [name]: value
@@ -59,7 +60,7 @@ class SignUp extends Component {
 
         try {
 
-            const {user} = await auth.createUserWithEmailAndPassword(email, password);
+            const { user } = await auth.createUserWithEmailAndPassword(email, password);
             await handleUserProfile(user, {displayName});
             
             this.setState({
@@ -77,13 +78,13 @@ class SignUp extends Component {
     render() {
 
         const { displayName, email, password, confirmPassword, errors } = this.state;
+        const authWrapperConfig = {
+            headline: 'Registration',
+            classes: 'signup'
+        }
 
         return (
-            <div className="signup">
-                <h2>
-                    SignUp
-                </h2>
-
+            <AuthWrapper {...authWrapperConfig}>
                 {errors.length > 0 && (
                     <div className="formValidation">
                         <ul>
@@ -137,7 +138,7 @@ class SignUp extends Component {
                     </Button>
 
                 </form>
-            </div>
+            </AuthWrapper>
         )
     }
 }

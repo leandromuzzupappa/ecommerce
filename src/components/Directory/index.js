@@ -1,19 +1,17 @@
 import React from 'react';
 
-import shopHerencia from '../../assets/images/homepage-hcg.jpg';
-import shopKosiuko from '../../assets/images/homepage-ksk.jpg';
 import './styles.scss';
 
 const Directory = props => {
     return (
         <div className="directory">
             <div className="item item--hcg">
-                <a href="#dsa">
+                <a href="#hcg">
                     Shop Herencia
                 </a>
             </div>
             <div className="item item--ksk">
-                <a href="#dsa">
+                <a href="#ksk">
                     Shop Kosiuko
                 </a>
             </div>

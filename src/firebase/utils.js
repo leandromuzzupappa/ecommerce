@@ -17,6 +17,10 @@ export const signInWithGoogle = () => auth.signInWithPopup(GoogleProvider);
 
 
 // Guardo el usuario en la db
+// Takes a user auth object
+// Check if the user exist in users collections in firebase db
+// if dont exist create a new document and store user information
+// retrun userRef document to store user information in local state
 export const handleUserProfile = async (userAuth, additionalData) => {
     // Checkeo si es un usuario real
     if (!userAuth) return;

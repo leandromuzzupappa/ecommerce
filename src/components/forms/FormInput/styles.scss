@@ -1,0 +1,31 @@
+@import './../../../assets//scss/_mixins';
+@import './../../../assets//scss/_variables';
+
+.formRow {
+    margin: 1rem 0rem;
+
+    label {
+        @include font-size(12);
+        font-weight: 700;
+        color: $gray3;
+        display: block;
+        margin-bottom: .3rem;
+
+        &::before {
+            content: '* '
+        }
+    }
+
+    input {
+        width: 100%;
+        padding: .5rem 1rem;
+        @include transition(.2s);
+        border: 1px solid $gray1;
+        outline: none;
+
+        &:active,
+        &:focus {
+            border: 1px solid $brandH;
+        }
+    }
+}

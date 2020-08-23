@@ -1,14 +1,13 @@
 @import '../../assets/scss/_mixins';
 @import '../../assets/scss/_variables';
 
-
-.signin {
-    width: 30%;
+.signup {
+    width: 80%;
     height: 100%;
     @include transition(.2s);
     border: 1px solid $gray1;
     padding: 1rem;
-    margin: 18vh auto;
+    margin: 10vh auto;
 
     h2 {
         margin-bottom: 1rem;
@@ -29,10 +28,14 @@
         }
     }
 
-    .socialSignin {
-        margin-top: 1rem;
-        padding-top: 1rem;
-        border-top: 1px solid $gray1;
+    form {
+        display: grid;
+        grid-template-columns: auto auto;
+        grid-column-gap: 2rem;
+
+        .formRow {
+            margin-top: 0px;
+        }
     }
 
     &:hover {

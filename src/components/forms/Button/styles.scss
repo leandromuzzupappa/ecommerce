@@ -1,0 +1,16 @@
+@import '../../../assets/scss/_mixins';
+@import '../../../assets/scss/_variables';
+
+.btn {
+    display: block;
+    width: 100%;
+    margin: 0;
+    padding: 1rem 0rem;
+    background: $black;
+    color: $white;
+    @include font-size(20);
+    text-transform: uppercase;
+    border: 0;
+    outline: none;
+    cursor: pointer;
+}

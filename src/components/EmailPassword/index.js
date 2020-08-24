@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { withRouter } from 'react-router-dom'
 
 import './styles.scss';
@@ -6,38 +7,39 @@ import './styles.scss';
 import AuthWrapper from './../AuthWrapper';
 import FormInput from  './../forms/FormInput'
 import Button from  './../forms/Button'
-import { auth } from '../../firebase/utils';
+import { resetPassword, resetAllAuthForms } from '../../redux/User/user.actions';
 
+const mapState = ({ user }) => ({
+    resetPasswordSuccess: user.resetPasswordSuccess,
+    resetPasswordError: user.resetPasswordError
+})
 
 const EmailPassword = props => {
-
+    const { resetPasswordSuccess, resetPasswordError } = useSelector(mapState);
+    const dispatch = useDispatch();
     const [email, setEmail] = useState('');
     const [errors, setErrors] = useState([]);
 
-    const handleSubmit = async e => {
-        e.preventDefault();
-
-        if (email.length !== 0) {
-            try {
-                const config = {
-                    url: 'http://localhost:3000/login'
-                }
-                await auth.sendPasswordResetEmail(email, config)
-                    .then(() => {
-                        props.history.push('/login');
-                    })
-                    .catch(()=>{
-                        const err = ['Email not found!']
-                        setErrors(err);
-                    })
-    
-            } catch (err) {
-                console.log(err);
-            }
-        } else {
-            const err = ['Email is must!']
-            setErrors(err);
+    useEffect(()=>{
+        if(resetPasswordSuccess) {
+            dispatch(resetAllAuthForms());
+            props.history.push('/login');
         }
+
+    }, [resetPasswordSuccess])
+
+    useEffect(()=>{
+        // checeko si es un array y si tiene datos
+        if(Array.isArray(resetPasswordError) && resetPasswordError.length > 0) {
+            setErrors(resetPasswordError);
+            alert(1);
+        }
+
+    }, [resetPasswordError])
+
+    const handleSubmit = e => {
+        e.preventDefault();
+        dispatch(resetPassword({ email }));
 
     }
 

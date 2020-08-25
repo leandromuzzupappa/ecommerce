@@ -1,8 +1,7 @@
 import React, { useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { Route, Switch } from 'react-router-dom';
-import { auth, handleUserProfile } from './firebase/utils';
-import { setCurrentUser } from './redux/User/user.actions';
+import { checkUserSession } from './redux/User/user.actions';
 
 import './default.scss';
 
@@ -20,87 +19,68 @@ import Login from './pages/Login';
 import Recovery from './pages/Recovery';
 import Dashboard from './pages/Dashboard';
 
+const App = (props) => {
+    const dispatch = useDispatch();
 
-const App = props => {
+    useEffect(() => {
+        dispatch(checkUserSession());
+    }, []);
 
-  const dispatch = useDispatch();
+    return (
+        <div className="App">
+            <Switch>
+                <Route
+                    exact
+                    path="/"
+                    render={() => (
+                        // En el render puedo returnear directo o si seteo el arrow function
+                        // de la siguiente manera tengo que hacer un return () => {return (<MainLayout> ... </MainLayout>)}
+                        <HomeLayout>
+                            <Homepage />
+                        </HomeLayout>
+                    )}
+                />
 
-  useEffect(() => {
+                <Route
+                    path="/registration"
+                    render={() => (
+                        <MainLayout>
+                            <Registration />
+                        </MainLayout>
+                    )}
+                />
 
-    const authListener = auth.onAuthStateChanged(async userAuth => {
+                <Route
+                    path="/login"
+                    render={() => (
+                        <MainLayout>
+                            <Login />
+                        </MainLayout>
+                    )}
+                />
 
-      // si existe el usuario
-      if(userAuth) {
-        const userRef = await handleUserProfile(userAuth);
-        userRef.onSnapshot(snapshot => {
-          // updateo el local state
-          dispatch(setCurrentUser({
-            id: snapshot.id,
-            ...snapshot.data()
-          }));
-        })
-      }
+                <Route
+                    path="/recovery"
+                    render={() => (
+                        <MainLayout>
+                            <Recovery />
+                        </MainLayout>
+                    )}
+                />
 
-      // si no existe
-      dispatch(setCurrentUser(userAuth));
-    });
-
-    return () => {
-      authListener(); // Me desuscribo
-    }
-  }, [])
-
-  return (
-    <div className='App'>
-      <Switch>
-        <Route exact path="/" render={() => (
-          // En el render puedo returnear directo o si seteo el arrow function
-          // de la siguiente manera tengo que hacer un return () => {return (<MainLayout> ... </MainLayout>)}
-          <HomeLayout>
-            <Homepage />
-          </HomeLayout>
-        )} />
-
-        <Route 
-          path="/registration" 
-          render={() => (
-            <MainLayout>
-              <Registration />
-            </MainLayout>
-          )} 
-        />
-
-        <Route 
-          path="/login" 
-          render={() => (
-            <MainLayout>
-              <Login />
-            </MainLayout>
-          )} 
-        />
-
-        <Route 
-          path="/recovery" render={() => (
-            <MainLayout>
-              <Recovery />
-            </MainLayout>
-          )} 
-        />
-
-        <Route 
-          path="/dashboard" render={() => (
-            <WithAuth>
-              <MainLayout>
-                <Dashboard />
-              </MainLayout>
-            </WithAuth>
-          )} 
-        />
-
-
-      </Switch>
-    </div>
-  );
-}
+                <Route
+                    path="/dashboard"
+                    render={() => (
+                        <WithAuth>
+                            <MainLayout>
+                                <Dashboard />
+                            </MainLayout>
+                        </WithAuth>
+                    )}
+                />
+            </Switch>
+        </div>
+    );
+};
 
 export default App;

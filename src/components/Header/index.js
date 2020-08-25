@@ -1,47 +1,46 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { auth } from './../../firebase/utils';
+import { signOutUserStart } from '../../redux/User/user.actions';
 
 import './styles.scss';
 import Logo from '../../assets/images/logo_outlet.svg';
 
 const mapState = ({ user }) => ({
-    currentUser: user.currentUser
-})
+    currentUser: user.currentUser,
+});
 
-const Header = props => {
-    const { currentUser } = useSelector(mapState); 
+const Header = (props) => {
+    const dispatch = useDispatch();
+    const { currentUser } = useSelector(mapState);
+
+    const signOut = () => {
+        dispatch(signOutUserStart());
+    };
+
     return (
         <header className="header">
             <div className="wrapper">
                 <div className="logo">
                     <Link to="/">
-                        <img src={Logo} alt="Kosiko Outlet"/>
+                        <img src={Logo} alt="Kosiko Outlet" />
                     </Link>
                 </div>
                 <nav>
                     <ul>
                         <li>
-                            <Link to="/#thisGonnaBeMyEshop">
-                                E-SHOPP KSK
-                            </Link>
+                            <Link to="/#thisGonnaBeMyEshop">E-SHOPP KSK</Link>
                         </li>
-
                     </ul>
                 </nav>
                 <div className="helperNav">
                     {currentUser && (
                         <ul>
                             <li>
-                                <Link to="/dashboard">
-                                    My account
-                                </Link>
+                                <Link to="/dashboard">My account</Link>
                             </li>
                             <li>
-                                <span onClick={() => auth.signOut()}>
-                                    Logout
-                                </span>
+                                <span onClick={() => signOut()}>Logout</span>
                             </li>
                         </ul>
                     )}
@@ -49,25 +48,21 @@ const Header = props => {
                     {!currentUser && (
                         <ul>
                             <li>
-                                <Link to="/registration">
-                                    Registration
-                                </Link>
+                                <Link to="/registration">Registration</Link>
                             </li>
                             <li>
-                                <Link to="/login">
-                                    Login
-                                </Link>
+                                <Link to="/login">Login</Link>
                             </li>
                         </ul>
                     )}
                 </div>
             </div>
         </header>
-    )
-}
+    );
+};
 
 Header.defaultProps = {
-    currentUser: null
-}
+    currentUser: null,
+};
 
 export default Header;

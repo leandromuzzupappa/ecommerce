@@ -1,4 +1,4 @@
-import { takeLatest, call, all, put, take } from 'redux-saga/effects';
+import { takeLatest, call, all, put } from 'redux-saga/effects';
 import {
     auth,
     handleUserProfile,
@@ -6,13 +6,22 @@ import {
     GoogleProvider,
 } from './../../firebase/utils';
 import userTypes from './user.types';
-import { signInSuccess, signOutUserSuccess } from './user.actions';
+import {
+    signInSuccess,
+    signOutUserSuccess,
+    resetPasswordSuccess,
+    userError,
+} from './user.actions';
+import { handleResetPasswordAPI } from './user.helpers';
 
-export function* getSnapshotFromUserAuth(user) {
+// Helper
+export function* getSnapshotFromUserAuth(user, additionalData = {}) {
     try {
-        const userRef = yield call(handleUserProfile, { userAuth: user });
+        const userRef = yield call(handleUserProfile, {
+            userAuth: user,
+            additionalData,
+        });
         const snapshot = yield userRef.get();
-
         yield put(
             signInSuccess({
                 id: snapshot.id,
@@ -20,53 +29,109 @@ export function* getSnapshotFromUserAuth(user) {
             })
         );
     } catch (err) {
-        console.log(err);
+        // console.log(err);
     }
 }
 
+// Sign in
 export function* emailSignIn({ payload: { email, password } }) {
     try {
         const { user } = yield auth.signInWithEmailAndPassword(email, password);
         yield getSnapshotFromUserAuth(user);
     } catch (err) {
-        console.log(err);
+        // console.log(err);
     }
 }
-// una vez que usersagas llama a esta fn va a llamar a emailsSignIn
 export function* onEmailSignInStart() {
-    // estect action that listening for and the name of the generator fn
     yield takeLatest(userTypes.EMAIL_SIGN_IN_START, emailSignIn);
 }
 
+// User validation
 export function* isUserAuthenticated() {
     try {
         const userAuth = yield getCurrentUser();
         if (!userAuth) return;
         yield getSnapshotFromUserAuth(userAuth);
     } catch (err) {
-        console.log(err);
+        // console.log(err);
     }
 }
 export function* onCheckUserSession() {
     yield takeLatest(userTypes.CHECK_USER_SESSION, isUserAuthenticated);
 }
 
+// Sign out
 export function* signOutUser() {
     try {
         yield auth.signOut();
         yield put(signOutUserSuccess());
     } catch (err) {
-        console.log(err);
+        // console.log(err);
     }
 }
 export function* onSignOutUserStart() {
     yield takeLatest(userTypes.SIGN_OUT_USER_START, signOutUser);
 }
 
-export default function* usersagas() {
+// Sign up
+export function* signUpUser({
+    payload: { displayName, email, password, confirmPassword },
+}) {
+    if (password !== confirmPassword) {
+        const err = ["Password Don't match"];
+        yield put(userError(err));
+        return;
+    }
+
+    try {
+        const { user } = yield auth.createUserWithEmailAndPassword(
+            email,
+            password
+        );
+        const additionalData = { displayName };
+        yield getSnapshotFromUserAuth(user, additionalData);
+    } catch (err) {
+        console.log(err);
+    }
+}
+export function* onSignUpUserStart() {
+    yield takeLatest(userTypes.SIGN_UP_USER_START, signUpUser);
+}
+
+// Reset Pw
+export function* resetPassword({ payload: { email } }) {
+    try {
+        yield call(handleResetPasswordAPI, email);
+        yield put(resetPasswordSuccess());
+    } catch (err) {
+        yield put(userError(err));
+    }
+}
+export function* onResetPasswordStart() {
+    yield takeLatest(userTypes.RESET_PASSWORD_START, resetPassword);
+}
+
+// Google sign in
+export function* googleSignIn() {
+    try {
+        const { user } = yield auth.signInWithPopup(GoogleProvider);
+        yield getSnapshotFromUserAuth(user);
+    } catch (err) {
+        // console.log(err);
+    }
+}
+export function* onGoogleSignInStart() {
+    yield takeLatest(userTypes.GOOGLE_SIGN_IN_START, googleSignIn);
+}
+
+// Main export
+export default function* userSagas() {
     yield all([
         call(onEmailSignInStart),
         call(onCheckUserSession),
         call(onSignOutUserStart),
+        call(onSignUpUserStart),
+        call(onResetPasswordStart),
+        call(onGoogleSignInStart),
     ]);
 }
